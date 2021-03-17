@@ -33,11 +33,12 @@ app.get('/', (req, res) => {
 // Get all (?) data points
 app.get('/all', async (req, res) => {
   await client.connect()
-  const result = await client.query('SELECT first_name, last_name FROM ancestry_dataset;')
+  const result = await client.query('SELECT first_name, last_name, last_name_normed, latitude, longitude FROM ancestry_dataset;')
   res.status(200).send(result.rows)
 })
 
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Started on port ${port}`)
 })
 
