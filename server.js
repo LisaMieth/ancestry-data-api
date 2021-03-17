@@ -1,25 +1,29 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-// const helmet = require('helmet')
-// const compression = require('compression')
-// const rateLimit = require('express-rate-limit')
-// const { body, check } = require('express-validator')
+const helmet = require('helmet')
+const compression = require('compression')
+const rateLimit = require('express-rate-limit')
 const { client } = require('./db_config')
 
 const app = express()
 const port = process.env.PORT || 5000
+const isProduction = process.env.NODE_ENV === 'production'
 
 const origin = {
-  origin: process.env.ORIGIN || '*',
+  origin: isProduction ? '*.herokuapp.com' : '*',
 }
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+})
 
-console.log(origin);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors(origin))
-// app.use(compression())
-// app.use(helmet())
+app.use(compression())
+app.use(helmet())
+app.use(limiter)
 
 app.get('/', (req, res) => {
   res.status(200)
